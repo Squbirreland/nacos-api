@@ -402,6 +402,8 @@ dependencies = [
 [[package]]
 name = "nacos-api_macro"
 version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "adcc0b0d9457f4dd83d7c7a81d227a90ae302844bc75612f69a47e897c20d9ce"
 dependencies = [
  "heck",
  "quote",
