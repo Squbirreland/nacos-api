@@ -2,14 +2,17 @@
 name = "nacos-api"
 version = "0.1.0"
 authors = ["Squbirreland <Squbirreland@outlook.com>"]
-description = "Nacos - Rust Client"
 edition = "2018"
-readme = "README.md"
-license = "Apache2.0"
 exclude = [".idea", "target"]
 include = ["src/**/*", "Cargo.toml", "nacos-api_macro/**/*", "LICENSE", "README.md"]
-keywords = ["nacos", "nacos-api"]
 repository = "https://github.com/Squbirreland/nacos-api.git"
+
+description = "Nacos - Rust Client"
+keywords = ["nacos", "nacos-api"]
+categories = ["development-tools::cargo-plugins"]
+readme = "README.md"
+license = "Apache-2.0"
+license-file = "LICENSE"
 
 [dependencies]
 nacos-api_macro = { version = "0.1.0", path = "./nacos-api_macro" }
