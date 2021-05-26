@@ -1,0 +1,12 @@
+[package]
+name = "nacos-api_macro"
+version = "0.1.0"
+edition = "2018"
+
+[lib]
+proc-macro = true
+
+[dependencies]
+syn = "1.0.72"
+quote = "1.0.9"
+heck = "0.3.2"
