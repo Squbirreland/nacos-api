@@ -40,8 +40,7 @@ impl NacosClient {
     /// register current instance and send/ack hart beat.
     /// ```rust
     /// use tokio::net::TcpListener;
-    /// use nacos_api::integration::NacosClient;
-    /// use nacos_api::model::{NacosConfig, ServerConfig};
+    /// use nacos_api::{NacosClient,NacosConfig, ServerConfig};
     ///
     /// // must open the port what config in ServerConfig to ack for nacos server
     /// tokio::spawn(async {
@@ -81,8 +80,7 @@ impl NacosClient {
     /// 随机获取一个健康实例的请求地址
     /// get a random health instance`s request address .
     /// ```rust
-    /// use nacos_api::integration::NacosClient;
-    /// use nacos_api::model::{NacosConfig, ServerConfig};
+    /// use nacos_api::{NacosClient,NacosConfig, ServerConfig};
     ///
     /// let client = NacosClient::new(
     ///     NacosConfig::new(

@@ -36,8 +36,7 @@ pub async fn init() {
 }
 
 pub async fn try_req_server() {
-    use nacos_api::integration::NacosClient;
-    use nacos_api::model::{NacosConfig, ServerConfig};
+    use nacos_api::{NacosClient,NacosConfig, ServerConfig};
 
     let client = NacosClient::new(
         NacosConfig::new(
