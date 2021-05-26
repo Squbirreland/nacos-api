@@ -12,7 +12,6 @@ keywords = ["nacos", "nacos-api"]
 categories = ["development-tools::cargo-plugins"]
 readme = "README.md"
 license = "Apache-2.0"
-license-file = "LICENSE"
 
 [dependencies]
 nacos-api_macro = { version = "0.1.0" }
