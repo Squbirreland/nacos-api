@@ -3,8 +3,8 @@ name = "nacos-api"
 version = "0.1.0"
 authors = ["Squbirreland <Squbirreland@outlook.com>"]
 edition = "2018"
-exclude = [".idea", "target"]
-include = ["src/**/*", "Cargo.toml", "nacos-api_macro/**/*", "LICENSE", "README.md"]
+exclude = [".idea", "target", "nacos-api_macro/**/*"]
+include = ["src/**/*", "Cargo.toml", "LICENSE", "README.md"]
 repository = "https://github.com/Squbirreland/nacos-api.git"
 
 description = "Nacos - Rust Client"
