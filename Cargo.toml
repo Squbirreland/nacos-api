@@ -2,6 +2,7 @@
 name = "nacos-api"
 version = "0.1.0"
 authors = ["Squbirreland <Squbirreland@outlook.com>"]
+description = "Nacos - Rust Client"
 edition = "2018"
 readme = "README.md"
 license = "Apache2.0"
