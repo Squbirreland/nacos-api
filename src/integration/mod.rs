@@ -55,7 +55,7 @@ impl NacosClient {
     /// let client = NacosClient::new(
     ///     NacosConfig::new(
     ///         "http",
-    ///         "139.155.225.19",
+    ///         "192.168.0.132",
     ///         8848),
     ///     ServerConfig::new(
     ///         "127.0.0.1",
@@ -73,8 +73,7 @@ impl NacosClient {
             .await { panic!("{:?}", e) };
         println!(" -- [debug] register success");
         let client = self.clone();
-        let handle = task::spawn(hart_beat_stay(client));
-        handle.await.unwrap();
+        task::spawn(hart_beat_stay(client));
     }
 
     /// 随机获取一个健康实例的请求地址
@@ -85,7 +84,7 @@ impl NacosClient {
     /// let client = NacosClient::new(
     ///     NacosConfig::new(
     ///         "http",
-    ///         "139.155.225.19",
+    ///         "192.168.0.132",
     ///         8848),
     ///     ServerConfig::new(
     ///         "127.0.0.1",
@@ -173,28 +172,13 @@ mod tests {
         NacosClient::new(
             NacosConfig::new(
                 "http",
-                "139.155.225.19",
+                "192.168.0.132",
                 8848),
             ServerConfig::new(
                 "127.0.0.1",
                 8080,
                 "test"),
         )
-    }
-
-    #[tokio::test]
-    async fn test_register() {
-        use tokio::net::TcpListener;
-
-        // must open the port what config in ServerConfig to ack for nacos server
-        tokio::spawn(async {
-            let tcp_listen = TcpListener::bind("0.0.0.0:8080").await.unwrap();
-            loop {
-                let (_, b) = tcp_listen.accept().await.unwrap();
-                println!(" - addr from : {:?}", b);
-            }
-        });
-        test_client().register(&None).await;
     }
 
     #[tokio::test]

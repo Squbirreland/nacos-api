@@ -8,7 +8,6 @@ repository = "https://github.com/Squbirreland/nacos-api.git"
 
 description = "THIS PROJECT IS SUPPORTER FOR NACOS-API"
 keywords = ["nacos-api"]
-categories = ["development-tools::cargo-plugins"]
 readme = "README.md"
 license = "Apache-2.0"
 

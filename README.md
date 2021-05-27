@@ -20,28 +20,40 @@
 
 ### How To Use
 
+#### register current instance
+
 ```rust
-pub async fn init() {
+use nacos_api::{NacosClient, NacosConfig, ServerConfig};
+
+#[tokio::main]
+async fn main() {
     let client = NacosClient::new(
         NacosConfig::new(
             "http",
-            "139.155.225.19",
-            8848),
+            "192.168.0.132",
+            8848,
+        ),
         ServerConfig::new(
             "127.0.0.1",
             8080,
-            "test"),
+            "test",
+        ),
     );
     client.register(&None).await;
+    loop {}
 }
+```
 
+#### try got other server address
+
+```rust
 pub async fn try_req_server() {
-    use nacos_api::{NacosClient,NacosConfig, ServerConfig};
+    use nacos_api::{NacosClient, NacosConfig, ServerConfig};
 
     let client = NacosClient::new(
         NacosConfig::new(
             "http",
-            "139.155.225.19",
+            "192.168.0.132",
             8848),
         ServerConfig::new(
             "127.0.0.1",

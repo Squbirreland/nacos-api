@@ -3,8 +3,7 @@ use std::error::Error;
 use crate::model::service_dto::{RegisterInstanceOption, RemoveInstanceOption, UpdateInstanceOption, GetInstanceOption, PostServiceOption, DeleteServiceOption, PutServiceOption, GetServiceOption};
 use std::collections::HashMap;
 use crate::model::service_vo::{NacosServerView, NacosHost, NacosBeat, NacosServiceInfo, NacosServiceList, NacosMetrics, NacosServerSimpleView};
-use reqwest::Client;
-use crate::util;
+use crate::util::{self, CLIENT};
 
 const POST_INSTANCE: &str = "/v1/ns/instance";
 const DELETE_INSTANCE: &str = "/v1/ns/instance";
@@ -66,8 +65,8 @@ impl NacosServiceApi {
                               service_name: &str,
                               service_ip: &str,
                               service_port: u16,
-                              option: &Option<GetInstanceOption>, )
-                              -> Result<NacosHost, Box<dyn Error>> {
+                              option: &Option<GetInstanceOption>,
+    ) -> Result<NacosHost, Box<dyn Error>> {
         let s = Self::get_instance_str(
             nacos_config,
             service_name,
@@ -96,7 +95,7 @@ impl NacosServiceApi {
 
     pub async fn hart_beat(&self, nacos_config: &NacosConfig)
                            -> Result<NacosBeat, Box<dyn Error + Send + Sync>> {
-        let resp = Client::new()
+        let resp = CLIENT
             .put(nacos_config.addr(PUT_INSTANCE_BEAT))
             .query(&self.server_config.init_map()).send().await?;
         let result = resp.json::<NacosBeat>().await?;
@@ -107,7 +106,7 @@ impl NacosServiceApi {
                                   -> Result<NacosBeat, Box<dyn Error + Send + Sync>> {
         let mut map = self.server_config.init_map();
         map.insert("beat".to_string(), beat.to_string());
-        let resp = Client::new()
+        let resp = CLIENT
             .put(nacos_config.addr(PUT_INSTANCE_BEAT))
             .query(&map).send().await?;
         let result = resp.json::<NacosBeat>().await?;

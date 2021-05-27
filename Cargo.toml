@@ -1,6 +1,6 @@
 [package]
 name = "nacos-api"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Squbirreland <Squbirreland@outlook.com>"]
 edition = "2018"
 exclude = [".idea", "target", "nacos-api_macro/**/*"]
@@ -9,7 +9,6 @@ repository = "https://github.com/Squbirreland/nacos-api.git"
 
 description = "Nacos - Rust Client"
 keywords = ["nacos", "nacos-api"]
-categories = ["development-tools::cargo-plugins"]
 readme = "README.md"
 license = "Apache-2.0"
 
