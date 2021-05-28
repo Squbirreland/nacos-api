@@ -21,6 +21,8 @@ const GET_SERVICE_LIST: &str = "/v1/ns/service/list";
 const GET_OPERATOR_METRICS: &str = "/v1/ns/operator/metrics";
 const GET_OPERATOR_SERVERS: &str = "/v1/ns/operator/servers";
 
+/// NacosServiceApi 是nacos的服务相关api封装
+/// NacosServiceApi is nacos api encapsulation of services .
 #[derive(Clone)]
 pub struct NacosServiceApi {
     server_config: ServerConfig,
@@ -33,34 +35,39 @@ impl NacosServiceApi {
 }
 
 impl NacosServiceApi {
+    /// register a new instance .
     pub async fn register_instance(&self, nacos_config: &NacosConfig, option: &Option<RegisterInstanceOption>)
                                    -> Result<(), Box<dyn Error>> {
         let map = self.server_config.init_map();
-        util::send_and_ok(map, option, |c| c.post(nacos_config.addr(POST_INSTANCE))).await
+        util::query_and_ok(map, option, |c| c.post(nacos_config.addr(POST_INSTANCE))).await
     }
 
+    /// remove current instance .
     pub async fn remove_instance(&self, nacos_config: &NacosConfig, option: &Option<RemoveInstanceOption>)
                                  -> Result<(), Box<dyn Error>> {
         let map = self.server_config.init_map();
-        util::send_and_ok(map, option, |c| c.delete(nacos_config.addr(DELETE_INSTANCE))).await
+        util::query_and_ok(map, option, |c| c.delete(nacos_config.addr(DELETE_INSTANCE))).await
     }
 
+    /// update current instance .
     pub async fn update_instance(&self, nacos_config: &NacosConfig, option: &Option<UpdateInstanceOption>)
                                  -> Result<(), Box<dyn Error>> {
         let map = self.server_config.init_map();
-        util::send_and_ok(map, option, |c| c.put(nacos_config.addr(PUT_INSTANCE))).await
+        util::query_and_ok(map, option, |c| c.put(nacos_config.addr(PUT_INSTANCE))).await
     }
 
+    /// get instance list .
     pub async fn get_instance_list(nacos_config: &NacosConfig, service_name: &str, option: &Option<GetInstanceOption>)
                                    -> Result<NacosServerView, Box<dyn Error>> {
         let mut map = HashMap::<String, String>::new();
         map.insert("serviceName".to_string(), service_name.to_string());
-        let resp = util::send(map, option, |c|
+        let resp = util::query_resp(map, option, |c|
             c.get(nacos_config.addr(GET_INSTANCE_LIST))).await?;
         let result = resp.json::<NacosServerView>().await?;
         Ok(result)
     }
 
+    /// get instance .
     pub async fn get_instance(nacos_config: &NacosConfig,
                               service_name: &str,
                               service_ip: &str,
@@ -77,6 +84,7 @@ impl NacosServiceApi {
         Ok(result)
     }
 
+    /// get instance return not serialized json
     pub async fn get_instance_str(nacos_config: &NacosConfig,
                                   service_name: &str,
                                   service_ip: &str,
@@ -87,12 +95,13 @@ impl NacosServiceApi {
         map.insert("serviceName".to_string(), service_name.to_string());
         map.insert("ip".to_string(), service_ip.to_string());
         map.insert("port".to_string(), service_port.to_string());
-        let resp = util::send(map, option, |c|
+        let resp = util::query_resp(map, option, |c|
             c.get(nacos_config.addr(GET_INSTANCE))).await?;
         let result = resp.text().await?;
         Ok(result)
     }
 
+    /// send hart beat
     pub async fn hart_beat(&self, nacos_config: &NacosConfig)
                            -> Result<NacosBeat, Box<dyn Error + Send + Sync>> {
         let resp = CLIENT
@@ -102,6 +111,7 @@ impl NacosServiceApi {
         Ok(result)
     }
 
+    /// send hart beat with beat info
     pub async fn hart_beat_weight(&self, nacos_config: &NacosConfig, beat: &str)
                                   -> Result<NacosBeat, Box<dyn Error + Send + Sync>> {
         let mut map = self.server_config.init_map();
@@ -113,47 +123,53 @@ impl NacosServiceApi {
         Ok(result)
     }
 
+    /// create a new server .
     pub async fn create_server(nacos_config: &NacosConfig, service_name: &str, option: &Option<PostServiceOption>)
                                -> Result<(), Box<dyn Error>> {
         let mut map = HashMap::<String, String>::new();
         map.insert("serviceName".to_string(), service_name.to_string());
-        util::send_and_ok(map, option, |c| c.post(nacos_config.addr(POST_SERVICE))).await
+        util::query_and_ok(map, option, |c| c.post(nacos_config.addr(POST_SERVICE))).await
     }
 
+    /// delete a server by server name and option .
     pub async fn delete_server(nacos_config: &NacosConfig, service_name: &str, option: &Option<DeleteServiceOption>)
                                -> Result<(), Box<dyn Error>> {
         let mut map = HashMap::<String, String>::new();
         map.insert("serviceName".to_string(), service_name.to_string());
-        util::send_and_ok(map, option, |c| c.delete(nacos_config.addr(DELETE_SERVICE))).await
+        util::query_and_ok(map, option, |c| c.delete(nacos_config.addr(DELETE_SERVICE))).await
     }
 
+    /// update a server by server name and option .
     pub async fn update_server(nacos_config: &NacosConfig, service_name: &str, option: &Option<PutServiceOption>)
                                -> Result<(), Box<dyn Error>> {
         let mut map = HashMap::<String, String>::new();
         map.insert("serviceName".to_string(), service_name.to_string());
         map.insert("protectThreshold".to_string(), "0".to_string());
-        util::send_and_ok(map, option, |c| c.put(nacos_config.addr(PUT_SERVICE))).await
+        util::query_and_ok(map, option, |c| c.put(nacos_config.addr(PUT_SERVICE))).await
     }
 
+    /// get a server by server name and option
     pub async fn get_server(nacos_config: &NacosConfig, service_name: &str, option: &Option<GetServiceOption>)
                             -> Result<NacosServiceInfo, Box<dyn Error>> {
         let mut map = HashMap::<String, String>::new();
         map.insert("serviceName".to_string(), service_name.to_string());
-        let resp = util::send(map, option, |c| c.get(nacos_config.addr(GET_SERVICE))).await?;
+        let resp = util::query_resp(map, option, |c| c.get(nacos_config.addr(GET_SERVICE))).await?;
         let result = resp.json::<NacosServiceInfo>().await?;
         Ok(result)
     }
 
+    /// get a server list by page limit
     pub async fn get_server_list(nacos_config: &NacosConfig, page_no: i32, page_size: i32, option: &Option<GetServiceOption>)
                                  -> Result<NacosServiceList, Box<dyn Error>> {
         let mut map = HashMap::<String, String>::new();
         map.insert("pageNo".to_string(), page_no.to_string());
         map.insert("pageSize".to_string(), page_size.to_string());
-        let resp = util::send(map, option, |c| c.get(nacos_config.addr(GET_SERVICE_LIST))).await?;
+        let resp = util::query_resp(map, option, |c| c.get(nacos_config.addr(GET_SERVICE_LIST))).await?;
         let result = resp.json::<NacosServiceList>().await?;
         Ok(result)
     }
 
+    /// get current nacos cluster running state .
     pub async fn get_operator_metrics(nacos_config: &NacosConfig)
                                       -> Result<NacosMetrics, Box<dyn Error>> {
         let resp = reqwest::get(nacos_config.addr(GET_OPERATOR_METRICS)).await?;
@@ -161,6 +177,18 @@ impl NacosServiceApi {
         Ok(result)
     }
 
+    /// get current nacos cluster server info .
+    /// ```rust
+    /// use nacos_api::{NacosServiceApi, NacosConfig, NacosClient, ServerConfig};
+    ///
+    /// let nacos_config = NacosConfig::new("http","192.168.0.132",8848);
+    /// //call by nacos_config
+    /// let result = NacosServiceApi::get_operator_servers(&nacos_config).await;
+    ///
+    /// let client = NacosClient::new(&nacos_config,ServerConfig::new("127.0.0.1",8080,"test"));
+    /// //call by client
+    /// let result = NacosServiceApi::get_operator_servers(client.nacos_config()).await;
+    /// ```
     pub async fn get_operator_servers(nacos_config: &NacosConfig)
                                       -> Result<NacosServerSimpleView, Box<dyn Error>> {
         let resp = reqwest::get(nacos_config.addr(GET_OPERATOR_SERVERS)).await?;

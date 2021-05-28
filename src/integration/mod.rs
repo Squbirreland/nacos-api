@@ -7,6 +7,8 @@ use std::error::Error;
 use crate::model::err::NacosError;
 use rand::Rng;
 
+/// NacosClient 是主要的nacos服务调用结构 ,
+/// NacosClient is the primary struct to call nacos server .
 #[derive(Clone)]
 pub struct NacosClient {
     nacos_config: NacosConfig,
@@ -14,10 +16,9 @@ pub struct NacosClient {
 }
 
 impl NacosClient {
-    pub fn new(nacos_config: NacosConfig, server_config: ServerConfig)
-               -> Self {
+    pub fn new(nacos_config: &NacosConfig, server_config: ServerConfig) -> Self {
         Self {
-            nacos_config,
+            nacos_config: nacos_config.clone(),
             service_api: NacosServiceApi::new(server_config),
         }
     }
@@ -39,28 +40,13 @@ impl NacosClient {
     /// 注册当前实例并自动发送/回应心跳
     /// register current instance and send/ack hart beat.
     /// ```rust
-    /// use tokio::net::TcpListener;
     /// use nacos_api::{NacosClient,NacosConfig, ServerConfig};
     ///
-    /// // must open the port what config in ServerConfig to ack for nacos server
-    /// tokio::spawn(async {
-    /// let tcp_listen = TcpListener::bind("0.0.0.0:8080").await.unwrap();
-    ///     loop {
-    ///         let (_, b) = tcp_listen.accept().await.unwrap();
-    ///         println!(" - addr from : {:?}", b);
-    ///     }
-    /// });
-    ///
     /// // create a client
+    /// let nacos = NacosConfig::new("http", "192.168.0.132", 8848);
     /// let client = NacosClient::new(
-    ///     NacosConfig::new(
-    ///         "http",
-    ///         "192.168.0.132",
-    ///         8848),
-    ///     ServerConfig::new(
-    ///         "127.0.0.1",
-    ///         8080,
-    ///         "test"),
+    ///     &nacos,
+    ///     ServerConfig::new("127.0.0.1", 8080, "test"),
     /// );
     ///
     /// // register current instance to nacos
@@ -71,7 +57,7 @@ impl NacosClient {
         if let Err(e) = self.service_api
             .register_instance(self.nacos_config(), option)
             .await { panic!("{:?}", e) };
-        println!(" -- [debug] register success");
+        println!(" -- [info] nacos register success");
         let client = self.clone();
         task::spawn(hart_beat_stay(client));
     }
@@ -81,20 +67,16 @@ impl NacosClient {
     /// ```rust
     /// use nacos_api::{NacosClient,NacosConfig, ServerConfig};
     ///
+    /// let nacos = NacosConfig::new("http", "192.168.0.132", 8848);
     /// let client = NacosClient::new(
-    ///     NacosConfig::new(
-    ///         "http",
-    ///         "192.168.0.132",
-    ///         8848),
-    ///     ServerConfig::new(
-    ///         "127.0.0.1",
-    ///         8080,
-    ///         "test"),
+    ///     &nacos,
+    ///     ServerConfig::new("127.0.0.1", 8080, "test"),
     /// );
-    /// let addr = client.get_addr_simple("test","/hi/friend").await?;
-    /// assert!("http://127.0.0.1:8080/hi/friend", addr.as_str());
+    ///
+    /// let addr = client.get_addr_simple("test").await?;
+    /// assert!("http://127.0.0.1:8080", addr.as_str());
     /// ```
-    pub async fn get_addr_simple(&self, server_name: &str, req_addr: &str) -> Result<String, Box<dyn Error>> {
+    pub async fn get_addr_simple(&self, server_name: &str) -> Result<String, Box<dyn Error>> {
         let mut option = GetInstanceOption::default();
         option.set_healthy_only(Some(true));
         let list = NacosServiceApi::get_instance_list(
@@ -109,9 +91,7 @@ impl NacosClient {
                 if v.is_empty() { return Err(Box::new(NacosError::throw(" -- err : server have not instance "))); }
                 let r = rand::thread_rng().gen_range(0..v.len());
                 let nh = &v[r];
-                let req = if let Some(s) = req_addr.strip_prefix('/')
-                { s.to_string() } else { req_addr.to_string() };
-                format!("http://{}:{}/{}", nh.ip, nh.port, req)
+                format!("http://{}:{}", nh.ip, nh.port)
             }
         };
         Ok(addr)
@@ -129,7 +109,6 @@ async fn hart_beat_stay(client: NacosClient) {
                 client.service_api.hart_beat_weight(client.nacos_config(), &bt).await
             }
         };
-        println!(" -- [debug] hart beat : {:?}", br);
         match br {
             Ok(nb) => {
                 let config = client.service_api.config();
@@ -163,27 +142,3 @@ async fn hart_beat_stay(client: NacosClient) {
     }
 }
 
-#[cfg(test)]
-mod tests {
-    use crate::integration::NacosClient;
-    use crate::model::{NacosConfig, ServerConfig};
-
-    fn test_client() -> NacosClient {
-        NacosClient::new(
-            NacosConfig::new(
-                "http",
-                "192.168.0.132",
-                8848),
-            ServerConfig::new(
-                "127.0.0.1",
-                8080,
-                "test"),
-        )
-    }
-
-    #[tokio::test]
-    async fn test_get_addr_simple() {
-        let addr = test_client().get_addr_simple("test", "").await.unwrap();
-        println!(" -- > addr : {}", addr);
-    }
-}

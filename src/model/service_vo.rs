@@ -4,16 +4,16 @@ use std::collections::HashMap;
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct NacosHost {
     #[serde(rename = "instanceId")]
-    pub instance_id: Option<String>,
+    pub instance_id: String,
     pub ip: String,
     pub port: i32,
-    pub weight: Option<f64>,
-    pub healthy: Option<bool>,
+    pub weight: f64,
+    pub healthy: bool,
     pub enabled: Option<bool>,
     pub ephemeral: Option<bool>,
     #[serde(rename = "clusterName")]
-    pub cluster_name: Option<String>,
-    pub service: Option<String>,
+    pub cluster_name: String,
+    pub service: String,
     pub metadata: HashMap<String, String>,
     #[serde(rename = "instanceHeartBeatInterval")]
     pub instance_heart_beat_interval: Option<i32>,
@@ -55,12 +55,12 @@ pub struct NacosBeat {
 #[derive(Serialize, Deserialize, Debug)]
 pub struct NacosServiceInfo {
     #[serde(rename = "namespaceId")]
-    pub namespace_id: Option<String>,
+    pub namespace_id: String,
     #[serde(rename = "groupName")]
-    pub group_name: Option<String>,
-    pub name: Option<String>,
+    pub group_name: String,
+    pub name: String,
     #[serde(rename = "protectThreshold")]
-    pub protect_threshold: Option<f64>,
+    pub protect_threshold: f64,
     pub metadata: HashMap<String, String>,
     pub selector: HashMap<String, String>,
     pub clusters: Vec<NacosClusterInfo>,
@@ -71,7 +71,7 @@ pub struct NacosClusterInfo {
     #[serde(rename = "healthChecker")]
     pub health_checker: HashMap<String, String>,
     pub metadata: HashMap<String, String>,
-    pub name: Option<String>,
+    pub name: String,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -103,32 +103,32 @@ pub struct NacosServerSimpleView {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct NacosServerSimple {
-    pub ip: Option<String>,
-    pub port: Option<isize>,
-    pub state: Option<String>,
+    pub ip: String,
+    pub port: isize,
+    pub state: String,
     #[serde(rename = "extendInfo")]
-    pub extend_info: Option<NacosExtendInfo>,
-    pub address: Option<String>,
+    pub extend_info: NacosExtendInfo,
+    pub address: String,
     #[serde(rename = "failAccessCnt")]
-    pub fail_access_cnt: Option<isize>,
+    pub fail_access_cnt: isize,
     pub abilities: HashMap<String, HashMap<String, bool>>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct NacosExtendInfo {
     #[serde(rename = "lastRefreshTime")]
-    pub last_refresh_time: Option<isize>,
+    pub last_refresh_time: isize,
     #[serde(rename = "raftMetaData")]
-    pub raft_meta_data: Option<HashMap<String, HashMap<String, NacosMetaData>>>,
+    pub raft_meta_data: HashMap<String, HashMap<String, NacosMetaData>>,
     #[serde(rename = "raftPort")]
-    pub raft_port: Option<String>,
-    pub version: Option<String>,
+    pub raft_port: String,
+    pub version: String,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct NacosMetaData {
-    pub leader: Option<String>,
+    pub leader: String,
     #[serde(rename = "raftGroupMember")]
-    pub raft_group_member: Option<Vec<String>>,
-    pub term: Option<isize>,
+    pub raft_group_member: Vec<String>,
+    pub term: isize,
 }

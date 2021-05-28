@@ -40,13 +40,17 @@ impl NacosConfig {
         }
     }
 
+    pub fn exchange(&mut self, ex: Self) -> Self {
+        let prev = self.clone();
+        self.scheme = ex.scheme;
+        self.nacos_ip = ex.nacos_ip;
+        self.nacos_port = ex.nacos_port;
+        prev
+    }
+
     pub fn addr(&self, target: &str) -> String {
-        let sub_path;
-        if !target.starts_with('/') {
-            sub_path = format!("/{}", target);
-        } else {
-            sub_path = target.to_string();
-        }
+        let sub_path = if target.starts_with('/')
+        { target.to_string() } else { format!("/{}", target) };
         format!(
             "{}://{}:{}/nacos{}",
             self.scheme, self.nacos_ip, self.nacos_port, sub_path
@@ -123,3 +127,39 @@ impl ServerConfig {
     }
 }
 
+#[derive(Default, Debug, Clone)]
+pub struct DeployConfig {
+    data_id: String,
+    group: String,
+    tenant: Option<String>,
+}
+
+impl DeployConfig {
+    pub fn new(data_id: &str, group: &str, tenant: Option<String>) -> Self {
+        Self {
+            data_id: data_id.to_string(),
+            group: group.to_string(),
+            tenant,
+        }
+    }
+
+    pub fn init_map(&self) -> HashMap<String, String> {
+        let mut map = HashMap::<String, String>::new();
+        map.insert("dataId".to_string(), self.data_id.clone());
+        map.insert("group".to_string(), self.group.clone());
+        if let Some(tenant) = &self.tenant {
+            map.insert("tenant".to_string(), tenant.clone());
+        };
+        map
+    }
+
+    pub fn data_id(&self) -> &str {
+        &self.data_id
+    }
+    pub fn group(&self) -> &str {
+        &self.group
+    }
+    pub fn tenant(&self) -> &Option<String> {
+        &self.tenant
+    }
+}

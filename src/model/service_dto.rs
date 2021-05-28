@@ -286,13 +286,15 @@ impl GetServiceOption {
     pub fn set_namespace_id(&mut self, namespace_id: Option<String>) {
         self.namespace_id = namespace_id;
     }
-}
-
-impl GetServiceOption {
     pub fn group_name(&self) -> &Option<String> {
         &self.group_name
     }
     pub fn namespace_id(&self) -> &Option<String> {
         &self.namespace_id
     }
+}
+
+#[derive(Debug, Default, Dto)]
+pub struct PostConfigsOption {
+
 }

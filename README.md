@@ -18,6 +18,11 @@
 - get operator metrics 查询系统运载
 - get operator servers 查询服务详情
 
+#### configs
+
+- upload config 上传配置
+- get config 获取配置
+
 ### How To Use
 
 #### register current instance
@@ -27,18 +32,12 @@ use nacos_api::{NacosClient, NacosConfig, ServerConfig};
 
 #[tokio::main]
 async fn main() {
+    let nacos = NacosConfig::new("http", "192.168.0.132", 8848);
     let client = NacosClient::new(
-        NacosConfig::new(
-            "http",
-            "192.168.0.132",
-            8848,
-        ),
-        ServerConfig::new(
-            "127.0.0.1",
-            8080,
-            "test",
-        ),
+        &nacos,
+        ServerConfig::new("127.0.0.1", 8080, "test"),
     );
+
     client.register(&None).await;
     loop {}
 }
@@ -50,18 +49,16 @@ async fn main() {
 pub async fn try_req_server() {
     use nacos_api::{NacosClient, NacosConfig, ServerConfig};
 
+    let nacos = NacosConfig::new("http", "192.168.0.132", 8848);
     let client = NacosClient::new(
-        NacosConfig::new(
-            "http",
-            "192.168.0.132",
-            8848),
-        ServerConfig::new(
-            "127.0.0.1",
-            8080,
-            "test"),
+        &nacos,
+        ServerConfig::new("127.0.0.1", 8080, "test"),
     );
-    let addr = client.get_addr_simple("test", "/hi/friend").await?;
-    assert!("http://127.0.0.1:8080/hi/friend", addr.as_str());
+
+    let addr = client.get_addr_simple("test").await?;
+    assert!("http://127.0.0.1:8080", addr.as_str());
 }
 ```
-    
+
+### Declaration
+    development by nacos v2.0.1
