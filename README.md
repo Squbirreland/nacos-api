@@ -70,7 +70,7 @@ use nacos_api::{NacosConfigClient, NacosConfigApi, DeployConfig, NacosConfig};
 #[tokio::main]
 async fn main() {
     let client = NacosConfigClient::new("test_data", "test_grep", None);
-    let nacos_config = NacosConfig::new("http", "139.155.225.19", 8848);
+    let nacos_config = NacosConfig::new("http", "192.168.0.132", 8848);
     // listen the nacos configs center
     client.listen_config(
         &nacos_config,
