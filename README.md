@@ -23,6 +23,7 @@
 - upload config 上传配置
 - get config 获取配置
 - delete config 删除配置
+- listen config 监听配置
 
 ### How To Use
 
