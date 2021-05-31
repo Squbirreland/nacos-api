@@ -22,6 +22,7 @@
 
 - upload config 上传配置
 - get config 获取配置
+- delete config 删除配置
 
 ### How To Use
 
@@ -60,5 +61,26 @@ pub async fn try_req_server() {
 }
 ```
 
+#### listen configs center
+
+```rust
+use nacos_api::{NacosConfigClient, NacosConfigApi, DeployConfig, NacosConfig};
+
+#[tokio::main]
+async fn main() {
+    let client = NacosConfigClient::new("test_data", "test_grep", None);
+    let nacos_config = NacosConfig::new("http", "139.155.225.19", 8848);
+    // listen the nacos configs center
+    client.listen_config(
+        &nacos_config,
+        |s| { println!(" perceive the configs changed to > {}", s) },
+        10
+    ).await;
+    // make the program keep alive
+    loop {}
+}
+```
+
 ### Declaration
+
     development by nacos v2.0.1

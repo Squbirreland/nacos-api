@@ -4,24 +4,28 @@ use std::error::Error;
 
 const GET_CONFIGS: &str = "/v1/cs/configs";
 const POST_CONFIGS: &str = "/v1/cs/configs";
+const DELETE_CONFIGS: &str = "/v1/cs/configs";
 
 #[derive(Clone)]
 pub struct NacosConfigApi {
-    config: DeployConfig,
+    deploy_config: DeployConfig,
 }
 
 impl NacosConfigApi {
     pub fn new(config: DeployConfig) -> Self {
         Self {
-            config,
+            deploy_config: config,
         }
+    }
+    pub fn deploy_config(&self) -> &DeployConfig {
+        &self.deploy_config
     }
 }
 
 impl NacosConfigApi {
     pub async fn get_configs(&self, nacos: &NacosConfig)
                              -> Result<String, Box<dyn Error>> {
-        let map = self.config.init_map();
+        let map = self.deploy_config.init_map();
         let resp = util::query(&map, |c| c.get(nacos.addr(GET_CONFIGS))).await?;
         let result = resp.text().await?;
         Ok(result)
@@ -35,5 +39,11 @@ impl NacosConfigApi {
         let resp = util::query(&map, |c| c.post(nacos.addr(POST_CONFIGS))).await?;
         util::resp_assert(resp, "true").await
     }
-}
 
+    pub async fn delete_configs(nacos: &NacosConfig, config: DeployConfig)
+                                -> Result<(), Box<dyn Error>> {
+        let map = config.init_map();
+        let resp = util::query(&map, |c| c.delete(nacos.addr(DELETE_CONFIGS))).await?;
+        util::resp_assert(resp, "true").await
+    }
+}
