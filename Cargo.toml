@@ -1,6 +1,6 @@
 [package]
 name = "nacos-api"
-version = "0.2.0"
+version = "0.2.1"
 authors = ["Squbirreland <Squbirreland@outlook.com>"]
 edition = "2018"
 exclude = [".idea", "target", "nacos-api_macro/**/*"]

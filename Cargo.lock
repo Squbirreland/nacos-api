@@ -394,7 +394,7 @@ dependencies = [
 
 [[package]]
 name = "nacos-api"
-version = "0.2.0"
+version = "0.2.1"
 dependencies = [
  "lazy_static",
  "md5",
