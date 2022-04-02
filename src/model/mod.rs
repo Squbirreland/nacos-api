@@ -14,7 +14,7 @@ pub(crate) fn catch_mapping<T: Dto>(map: &mut HashMap<String, String>, option: &
     if let Some(s) = option { s.mapping(map); }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct NacosConfig {
     scheme: String,
     nacos_ip: String,
