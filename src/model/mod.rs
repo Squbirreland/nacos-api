@@ -65,6 +65,7 @@ pub struct ServerConfig {
     server_name: String,
     ephemeral: bool,
     group_name: Option<String>,
+    namespaceId: Option<String>,
 }
 
 impl ServerConfig {
@@ -82,6 +83,9 @@ impl ServerConfig {
     }
     pub fn set_group_name(&mut self, group_name: Option<String>) {
         self.group_name = group_name;
+    }
+    pub fn set_namespace(&mut self, namespace: Option<String>) {
+        self.namespaceId = namespace;
     }
 }
 
@@ -102,13 +106,14 @@ impl ServerConfig {
 }
 
 impl ServerConfig {
-    pub fn new(server_ip: &str, server_port: u16, server_name: &str) -> Self {
+    pub fn new(server_ip: &str, server_port: u16, server_name: &str, group_name: Option<String>, namespace: Option<String>) -> Self {
         Self {
             server_ip: server_ip.to_string(),
             server_port,
             server_name: server_name.to_string(),
             ephemeral: false,
             group_name: None,
+            namespaceId: namespace
         }
     }
 
@@ -122,6 +127,9 @@ impl ServerConfig {
         }
         if let Some(s) = &self.group_name {
             map.insert("groupName".to_string(), s.to_string());
+        }
+        if let Some(s) = &self.namespaceId {
+            map.insert("namespaceId".to_string(), s.to_string());
         }
         map
     }
