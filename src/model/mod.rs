@@ -104,7 +104,7 @@ impl ServerConfig {
         &self.group_name
     }
     pub fn namespace_id(&self) -> &Option<String> {
-        &self.namespaceId
+        &self.namespace_id
     }
 }
 
