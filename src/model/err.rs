@@ -2,6 +2,7 @@ use std::error::Error;
 use std::fmt::{Display, Formatter};
 
 /// 自定 Nacos 返回的错误对象
+#[allow(unused)]
 #[derive(Debug)]
 pub struct NacosError {
     reason: String,
