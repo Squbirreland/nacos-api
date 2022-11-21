@@ -49,12 +49,24 @@ impl NacosConfigClient {
 async fn listen<F>(config_api: NacosConfigApi, nacos_config: NacosConfig, func: F, interval_secs: u64)
     where F: Fn(&String)
 {
-    let prev_conf = config_api.get_configs(&nacos_config).await.unwrap();
+    let prev_conf = match config_api.get_configs(&nacos_config).await {
+        Ok(conf) => conf,
+        Err(err) => {
+            eprintln!("config_api.get_configs error: {}, nacos_config: {:?}", err, nacos_config);
+            "".to_owned()
+        }
+    };
     let mut prev_conf_md5 = format!("{:x}", md5::compute(prev_conf));
     println!(" -- [debug] starting listen configs");
     loop {
         time::sleep(Duration::from_secs(interval_secs)).await;
-        let current_conf = config_api.get_configs(&nacos_config).await.unwrap();
+        let current_conf = match config_api.get_configs(&nacos_config).await {
+            Ok(conf) => conf,
+            Err(err) => {
+                eprintln!("config_api.get_configs error: {}, nacos_config: {:?}", err, nacos_config);
+                "".to_owned()
+            }
+        };
         let current_conf_md5 = format!("{:x}", md5::compute(&current_conf));
         if prev_conf_md5.ne(&current_conf_md5) {
             func(&current_conf);
