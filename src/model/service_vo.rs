@@ -13,7 +13,7 @@ pub struct NacosHost {
     pub ephemeral: Option<bool>,
     #[serde(rename = "clusterName")]
     pub cluster_name: String,
-    pub service: String,
+    pub service: Option<String>,
     pub metadata: HashMap<String, String>,
     #[serde(rename = "instanceHeartBeatInterval")]
     pub instance_heart_beat_interval: Option<i32>,
